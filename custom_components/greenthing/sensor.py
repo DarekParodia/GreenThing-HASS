@@ -1,8 +1,30 @@
 import logging
 from homeassistant.helpers.entity import Entity
 from .const import DOMAIN, CONF_HOST, CONF_PORT
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 _LOGGER = logging.getLogger(__name__)
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the sensor platform."""
+    entry_id = config_entry.entry_id
+    data = hass.data["greenthing"][entry_id]
+    host = data["host"]
+    port = data["port"]
+    fetch_sensor_data = data["fetch_sensor_data"]
+
+    sensors = [
+        GreenThingSensor(hass, host, port, "Temperature", fetch_sensor_data),
+        GreenThingSensor(hass, host, port, "Humidity", fetch_sensor_data),
+    ]
+    async_add_entities(sensors, True)
+
 
 class GreenThingSensor(Entity):
     """Representation of a GreenThing sensor."""

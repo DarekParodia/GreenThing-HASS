@@ -1,15 +1,18 @@
 """The GreenThing integration."""
 from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .sensor import GreenThingSensor
 import asyncio
 
-async def async_setup_entry(hass, config_entry):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up the GreenThing sensor from a config entry."""
     host = config_entry.data[CONF_HOST]
     port = config_entry.data[CONF_PORT]
 
     # Define a function to fetch sensor data (replace with your actual data fetching logic)
-    async def fetch_sensor_data(sensor_type):
+    async def fetch_sensor_data(sensor_type: str):
         # Simulate fetching data from your GreenThing device
         # In a real implementation, you would use 'host' and 'port' to connect
         # to your device and retrieve the sensor value.
@@ -21,14 +24,15 @@ async def async_setup_entry(hass, config_entry):
         else:
             return None
 
-    # Create sensor entities
-    sensors = [
-        GreenThingSensor(hass, host, port, "Temperature", fetch_sensor_data),
-        GreenThingSensor(hass, host, port, "Humidity", fetch_sensor_data),
-    ]
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(config_entry, "sensor")
+    )
 
-    async_add_entities = hass.helpers.entity_platform.async_get_current_platform().async_add_entities
-    async_add_entities(sensors, True)
+    hass.data.setdefault("greenthing", {})[config_entry.entry_id] = {
+        "host": host,
+        "port": port,
+        "fetch_sensor_data": fetch_sensor_data,
+    }
 
     return True
 
