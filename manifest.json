@@ -1,0 +1,10 @@
+{
+    "domain": "greenthing",
+    "name": "GreenThing",
+    "version": "1.0",
+    "documentation": "https://github.com/DarekParodia/GreenThing",
+    "dependencies": [],
+    "codeowners": ["@DarekParodia"],
+    "requirements": [],
+    "config_flow": true
+  }
