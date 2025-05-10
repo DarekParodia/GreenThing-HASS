@@ -1,7 +1,7 @@
 import requests
 import logging
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import TEMP_CELSIUS, PERCENTAGE
+from homeassistant.const import CELSIUS, PERCENTAGE
 from .const import DOMAIN, CONF_HOST, CONF_PORT
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class GreenThingSensor(Entity):
     
     @property
     def unit_of_measurement(self):
-        return TEMP_CELSIUS
+        return CELSIUS
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
