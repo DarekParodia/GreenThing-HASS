@@ -7,10 +7,11 @@ data_schema = {
     vol.Required(CONF_HOST): str,
     vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
 }
-class GreenThingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class GreenThingConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for GreenThing."""
 
     VERSION = 1
+    DOMAIN = DOMAIN
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
