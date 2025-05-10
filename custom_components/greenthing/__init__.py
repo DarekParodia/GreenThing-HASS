@@ -1,4 +1,3 @@
-from homeassistant.helpers.entity_platform import async_add_entities
 from .sensor import GreenThingSensor
 from homeassistant.config_entries import ConfigEntry
 
