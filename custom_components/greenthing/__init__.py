@@ -12,7 +12,7 @@ async def async_setup_entry(hass, config_entry):
         GreenThingSensor("Temperature", "2"),
         GreenThingSensor("Humidity", "3"),
     ]
-    # async_add_entities(sensors, True)
+    async_add_entities(sensors, True)
     return True
 
 async def async_setup(hass, config):
