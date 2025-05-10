@@ -6,18 +6,6 @@ from .const import DOMAIN, CONF_HOST, CONF_PORT
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Set up the GreenThing sensor from a config entry."""
-    host = config_entry.data[CONF_HOST]
-    port = config_entry.data[CONF_PORT]
-
-    # Example sensor data
-    sensors = [
-        GreenThingSensor("Temperature", "2"),
-        GreenThingSensor("Humidity", "3"),
-    ]
-    async_add_entities(sensors, True)
-
 class GreenThingSensor(Entity):
     """Representation of a GreenThing sensor."""
 
