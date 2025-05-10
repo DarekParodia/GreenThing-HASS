@@ -13,3 +13,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         GreenThingSensor("Humidity", "3"),
     ]
     async_add_entities(sensors, True)
+
+async def async_setup(hass, config):
+    """Set up the GreenThing component."""
+    # We allow config via YAML, but we don't use it.
+    return True
