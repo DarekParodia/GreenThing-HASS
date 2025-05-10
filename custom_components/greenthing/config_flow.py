@@ -10,6 +10,8 @@ data_schema = {
 class GreenThingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for GreenThing."""
 
+    VERSION = 1
+
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
         errors = {}
