@@ -11,7 +11,7 @@ class GreenThingConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for GreenThing."""
 
     VERSION = 1
-    DOMAIN = DOMAIN
+    DOMAIN = "greenthing"
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
