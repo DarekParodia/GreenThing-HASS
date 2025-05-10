@@ -43,6 +43,9 @@ class GreenThingConfigFlow(config_entries.ConfigFlow):
 class GreenThingOptionsFlow(config_entries.OptionsFlow):
     """Handle options flow for GreenThing."""
 
+    VERSION = 1
+    DOMAIN = "greenthing"
+
     def __init__(self, config_entry):
         """Initialize the options flow."""
         self.config_entry = config_entry
