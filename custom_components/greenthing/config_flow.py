@@ -5,7 +5,7 @@ from .const import DOMAIN, CONF_HOST, CONF_PORT, DEFAULT_PORT
 # Define the schema for the form
 data_schema = {
     vol.Required(CONF_HOST): str,
-    vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
+    vol.Optional(CONF_PORT, default=DEFAULT_PORT): int
 }
 class GreenThingConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for GreenThing."""
@@ -63,7 +63,7 @@ class GreenThingOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             # Validate the input
             self._host = str(user_input[CONF_HOST])
-            self._port = int(user_input[CONF_PORT])
+            self._port = user_input[CONF_PORT]
 
             if not self._host:
                 errors["base"] = "invalid_host"
@@ -72,7 +72,7 @@ class GreenThingOptionsFlow(config_entries.OptionsFlow):
             else:
                 # If the input is valid, proceed to update the entry
                 return self.async_create_entry(
-                    title=self._host,
+                    title=DOMAIN,
                     data={
                         CONF_HOST: self._host,
                         CONF_PORT: self._port,
@@ -80,5 +80,5 @@ class GreenThingOptionsFlow(config_entries.OptionsFlow):
                 )
 
         return self.async_show_form(
-            step_id="init", data_schema=data_schema, errors=errors
+            step_id="user", data_schema=vol.Schema(data_schema), errors=errors
         )
