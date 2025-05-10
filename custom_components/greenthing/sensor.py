@@ -1,7 +1,6 @@
 import requests
 import logging
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import CELSIUS, PERCENTAGE
 from .const import DOMAIN, CONF_HOST, CONF_PORT
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,10 +27,6 @@ class GreenThingSensor(Entity):
     def unique_id(self):
         """Return a unique ID for the sensor."""
         return f"greenthing_{self._name.lower()}"
-    
-    @property
-    def unit_of_measurement(self):
-        return CELSIUS
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
