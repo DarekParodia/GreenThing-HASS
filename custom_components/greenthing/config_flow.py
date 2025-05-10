@@ -47,9 +47,6 @@ class GreenThingOptionsFlow(config_entries.OptionsFlow):
         self._port = config_entry.data[CONF_PORT]
 
     async def async_step_init(self, user_input=None):
-        return await self.async_step_user()
-    
-    async def async_step_init(self, user_input=None):
         """Manage the options."""
         errors = {}
 
