@@ -2,7 +2,7 @@
 from homeassistant.const import CONF_HOST, CONF_PORT
 from .sensor import GreenThingSensor
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass, config_entry):
     """Set up the GreenThing sensor from a config entry."""
     host = config_entry.data[CONF_HOST]
     port = config_entry.data[CONF_PORT]
@@ -12,7 +12,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         GreenThingSensor("Temperature", "2"),
         GreenThingSensor("Humidity", "3"),
     ]
-    async_add_entities(sensors, True)
+    # async_add_entities(sensors, True)
+    return True
 
 async def async_setup(hass, config):
     """Set up the GreenThing component."""
