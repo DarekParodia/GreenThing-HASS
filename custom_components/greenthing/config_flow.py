@@ -54,6 +54,10 @@ class GreenThingOptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
+        return await self.async_step_user(user_input)
+
+    async def async_step_user(self, user_input=None):
+        """Manage the options."""
         errors = {}
 
         if user_input is not None:
