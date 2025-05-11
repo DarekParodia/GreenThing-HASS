@@ -5,7 +5,7 @@
     "documentation": "https://github.com/DarekParodia/GreenThing",
     "dependencies": [],
     "codeowners": ["@DarekParodia"],
-    "requirements": [],
+    "requirements": ["aiohttp>=3.8.0"],
     "config_flow": true,
     "iot_class": "local_push"
   }
