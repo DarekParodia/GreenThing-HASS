@@ -80,7 +80,7 @@ class GreenThingSwitch(SwitchEntity):
                             data = await response.json()
                             switch_data = get_switch_from_name(self._attr_name, data)
                             if switch_data:
-                                self._is_on = switch_data["state"]
+                                self._is_on = switch_data["state"] == "true"
                                 self.async_write_ha_state()
             except (aiohttp.ClientError, async_timeout.TimeoutError) as err:
                 _LOGGER.error("Error updating switch state: %s", err)
