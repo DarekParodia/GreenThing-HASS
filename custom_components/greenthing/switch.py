@@ -3,6 +3,7 @@ from __future__ import annotations
 import aiohttp
 import async_timeout
 import logging
+import json
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
@@ -23,7 +24,7 @@ async def async_setup_entry(
     """Set up the GreenThing switches from API response."""
     host = config_entry.data[CONF_HOST]
     port = config_entry.data[CONF_PORT]
-    api_url = f"http://{host}:{port}/"  # Adjust the endpoint as needed
+    api_url = f"http://{host}:{port}/"
 
     async with aiohttp.ClientSession() as session:
         try:
@@ -32,12 +33,13 @@ async def async_setup_entry(
                     if response.status == 200:
                         data = await response.json()
                         switches = []
-                        for switch_data in data["dataPoints"]:  # Adjust based on your API response structure
-                            if switch_data["type"] == 2:
+                        for point in data["dataPoints"]:
+                            if point["type"] == 2:  # Type 2 is for buttons
                                 switches.append(
                                     GreenThingSwitch(
-                                        name=switch_data["name"],
-                                        api_url=f"http://{host}:{port}/"
+                                        name=point["name"],
+                                        api_url=f"http://{host}:{port}/",
+                                        initial_state=point["state"]
                                     )
                                 )
                         async_add_entities(switches)
@@ -47,22 +49,15 @@ async def async_setup_entry(
         except (aiohttp.ClientError, async_timeout.TimeoutError) as err:
             _LOGGER.error("Error connecting to GreenThing API: %s", err)
             raise ConfigEntryNotReady
-        
-def get_switch_from_name(name: str, json_data: dict) -> dict:
-    """Get switch data from name."""
-    for switch in json_data["dataPoints"]:
-        if switch["name"] == name:
-            return switch
-    return {}
 
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
 
-    def __init__(self, name: str, api_url: str) -> None:
+    def __init__(self, name: str, api_url: str, initial_state: bool) -> None:
         """Initialize the switch."""
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{name.lower()}"
-        self._is_on = False
+        self._is_on = initial_state
         self._api_url = api_url
 
     @property
@@ -75,21 +70,30 @@ class GreenThingSwitch(SwitchEntity):
         async with aiohttp.ClientSession() as session:
             try:
                 async with async_timeout.timeout(10):
-                    async with session.get(f"{self._api_url}/") as response:
+                    async with session.get(self._api_url) as response:
                         if response.status == 200:
                             data = await response.json()
-                            switch_data = get_switch_from_name(self._attr_name, data)
-                            if switch_data:
-                                self._is_on = switch_data["state"] == "true"
-                                self.async_write_ha_state()
+                            for point in data["dataPoints"]:
+                                if point["name"] == self._attr_name:
+                                    self._is_on = point["state"]
+                                    self.async_write_ha_state()
+                                    break
             except (aiohttp.ClientError, async_timeout.TimeoutError) as err:
                 _LOGGER.error("Error updating switch state: %s", err)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
+        # payload = {
+        #     "name": self._attr_name,
+        #     "state": True
+        # }
         # async with aiohttp.ClientSession() as session:
         #     try:
-        #         async with session.post(f"{self._api_url}/on") as response:
+        #         async with session.post(
+        #             self._api_url,
+        #             data=json.dumps(payload),
+        #             headers={"Content-Type": "application/json"}
+        #         ) as response:
         #             if response.status == 200:
         #                 self._is_on = True
         #                 self.async_write_ha_state()
@@ -98,10 +102,18 @@ class GreenThingSwitch(SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
+        # payload = {
+        #     "name": self._attr_name,
+        #     "state": False
+        # }
         # async with aiohttp.ClientSession() as session:
         #     try:
-        #         async with session.post(f"{self._api_url}/off") as response:
-        #             if response.status == 200:
+        #         async with session.post(
+        #             self._api_url,
+        #             data=json.dumps(payload),
+        #             headers={"Content-Type": "application/json"}
+        #         ) as response:
+        #             if response.status == 200):
         #                 self._is_on = False
         #                 self.async_write_ha_state()
         #     except (aiohttp.ClientError, async_timeout.TimeoutError) as err:
