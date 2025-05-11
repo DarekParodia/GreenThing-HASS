@@ -7,12 +7,28 @@ import json
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
 
 from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
-
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the switch platform."""
+    api_url = hass.data[DOMAIN][entry.entry_id]["api_url"]
+    datapoints = hass.data[DOMAIN][entry.entry_id]["datapoints"]
+    switches = []
+    for datapoint in datapoints:
+        if datapoint["type"] == 2:
+            switches.append(GreenThingSwitch(datapoint["name"]))
+    async_add_entities(switches, True)
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
 
