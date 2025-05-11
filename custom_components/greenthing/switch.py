@@ -21,7 +21,7 @@ async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
-) -> None:
+) -> None: 
     """Set up the GreenThing switches from API response."""
     host = config_entry.data[CONF_HOST]
     port = config_entry.data[CONF_PORT]
