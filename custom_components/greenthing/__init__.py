@@ -1,21 +1,16 @@
-"""The GreenThing integration."""
-# from homeassistant.const import CONF_HOST, CONF_PORT
-# from .sensor import GreenThingSensor
+"""The Green Thing integration."""
+from __future__ import annotations
 
-# async def async_setup_entry(hass, config_entry):
-#     """Set up the GreenThing sensor from a config entry."""
-#     host = config_entry.data[CONF_HOST]
-#     port = config_entry.data[CONF_PORT]
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 
-#     # Example sensor data
-#     sensors = [
-#         GreenThingSensor("Temperature", "2"),
-#         GreenThingSensor("Humidity", "3"),
-#     ]
-#     async_add_entities(sensors, True)
-#     return True
+DOMAIN = "greenthing"
 
-# async def async_setup(hass, config):
-#     """Set up the GreenThing component."""
-#     # We allow config via YAML, but we don't use it.
-#     return True
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up Green Thing from a config entry."""
+    await hass.config_entries.async_forward_entry_setups(entry, ["light"])
+    return True
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    return await hass.config_entries.async_unload_platforms(entry, ["light"])
