@@ -27,16 +27,16 @@ async def async_setup_entry(
     switches = []
     for datapoint in datapoints:
         if datapoint["type"] == 2:
-            switches.append(GreenThingSwitch(datapoint["name"]))
+            switches.append(GreenThingSwitch(datapoint["name"], datapoint["state"]))
     async_add_entities(switches, True)
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, initial_state: bool) -> None:
         """Initialize the switch."""
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{name.lower()}"
-        self._is_on = True
+        self._is_on = initial_state
 
     @property
     def is_on(self) -> bool:
