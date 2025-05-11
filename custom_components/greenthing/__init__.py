@@ -27,7 +27,7 @@ async def get_datapoints(api_url: str) -> list:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Green Thing from a config entry."""
-    await hass.config_entries.async_forward_entry_setups(entry, ["light", "switch"])
+    await hass.config_entries.async_forward_entry_setups(entry, ["switch"])
 
     api_url = f"http://{entry.data['host']}:{entry.data['port']}/"
 
@@ -49,4 +49,4 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, ["light", "switch"])
+    return await hass.config_entries.async_unload_platforms(entry, ["switch"])
