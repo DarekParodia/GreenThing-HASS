@@ -36,8 +36,7 @@ class GreenThingSwitch(SwitchEntity):
         """Initialize the switch."""
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{name.lower()}"
-        self._api_url = api_url
-        self._is_on = initial_state
+        self._is_on = True
 
     @property
     def is_on(self) -> bool:
