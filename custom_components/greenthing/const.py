@@ -1,3 +1,6 @@
+"""Constants for the GreenThing integration."""
+from datetime import timedelta
+
 DOMAIN = "greenthing"
 
 # Configuration keys
@@ -7,4 +10,5 @@ CONF_PORT = "port"
 # Default values
 DEFAULT_PORT = 80
 
-SCAN_INTERVAL = 1  # seconds
+# Scan interval needs to be a timedelta object
+SCAN_INTERVAL = timedelta(seconds=1)

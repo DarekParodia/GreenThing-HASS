@@ -32,8 +32,8 @@ async def async_setup_entry(
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
 
-    # should_poll = True
-    # scan_interval = SCAN_INTERVAL
+    should_poll = True
+    scan_interval = SCAN_INTERVAL
 
     def __init__(self, name: str) -> None:
         """Initialize the switch."""
