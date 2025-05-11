@@ -1,47 +1,38 @@
+import requests
 import logging
-from homeassistant.helpers.entity import Entity
-from .const import DOMAIN, CONF_HOST, CONF_PORT
+
+from homeassistant.components.switch import SwitchEntity
+from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+
+from .const import DOMAIN, CONF_HOST, CONF_PORT
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(
+def setup_platform(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    config: ConfigType,
+    add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType | None = None
 ) -> None:
     """Set up the sensor platform."""
-    entry_id = config_entry.entry_id
-    data = hass.data["greenthing"][entry_id]
-    host = data["host"]
-    port = data["port"]
-    fetch_sensor_data = data["fetch_sensor_data"]
-
-    sensors = [
-        GreenThingSensor(hass, host, port, "Temperature", fetch_sensor_data),
-        GreenThingSensor(hass, host, port, "Humidity", fetch_sensor_data),
-    ]
-    async_add_entities(sensors, True)
-
+    add_entities([Button()])
 
 class GreenThingSensor(Entity):
     """Representation of a GreenThing sensor."""
 
-    def __init__(self, hass, host, port, name, fetch_sensor_data):
+    def __init__(self, name, state):
         """Initialize the sensor."""
-        self._hass = hass
-        self._host = host
-        self._port = port
         self._name = name
-        self._state = None  # Initialize state to None
-        self._fetch_sensor_data = fetch_sensor_data # Store the data fetching function
+        self._state = state
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"GreenThing {self._name}"
+        return self._name
 
     @property
     def state(self):
@@ -55,8 +46,31 @@ class GreenThingSensor(Entity):
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
-        try:
-            self._state = await self._fetch_sensor_data(self._name.lower())
-        except Exception as e:
-            _LOGGER.error(f"Error updating sensor {self._name}: {e}")
-            self._state = None
+        # Update the state here (e.g., fetch data from an API)
+        self._state = await self._fetch_sensor_data()
+    
+    async def _fetch_sensor_data(self):
+        return 25.0
+    
+class Button(SwitchEntity):
+    """Representation of a GreenThing button."""
+    _attr_has_entity_name = True
+    _attr_name = "GreenThing Button"
+
+    def __init__(self):
+        self._is_on = False
+        self._attr_device_info = ...  # For automatic device registration
+        self._attr_unique_id = ...
+
+    @property
+    def is_on(self):
+        """If the switch is currently on or off."""
+        return self._is_on
+
+    def turn_on(self, **kwargs):
+        """Turn the switch on."""
+        self._is_on = True
+
+    def turn_off(self, **kwargs):
+        """Turn the switch off."""
+        self._is_on = False
