@@ -9,6 +9,3 @@ CONF_PORT = "port"
 
 # Default values
 DEFAULT_PORT = 80
-
-# Scan interval needs to be a timedelta object
-SCAN_INTERVAL = timedelta(seconds=1)

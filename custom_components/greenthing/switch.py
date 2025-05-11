@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_INTERVAL
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,9 +31,6 @@ async def async_setup_entry(
     async_add_entities(switches, True)
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
-
-    should_poll = True
-    scan_interval = SCAN_INTERVAL
 
     def __init__(self, name: str) -> None:
         """Initialize the switch."""
