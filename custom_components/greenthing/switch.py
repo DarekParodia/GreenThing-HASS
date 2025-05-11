@@ -27,6 +27,13 @@ async def async_setup_entry(
     port = config_entry.data[CONF_PORT]
     api_url = f"http://{host}:{port}/"
 
+    # Get existing entity IDs to prevent duplicates
+    existing_entities = hass.states.async_entity_ids("switch")
+    existing_greenthing_switches = {
+        entity_id.split('.')[1] for entity_id in existing_entities 
+        if entity_id.startswith(f"switch.{DOMAIN}_")
+    }
+
     async with aiohttp.ClientSession() as session:
         try:
             async with async_timeout.timeout(10):
@@ -36,14 +43,28 @@ async def async_setup_entry(
                         switches = []
                         for point in data["dataPoints"]:
                             if point["type"] == 2:  # Type 2 is for buttons
-                                switches.append(
-                                    GreenThingSwitch(
-                                        name=point["name"],
-                                        api_url=f"http://{host}:{port}/",
-                                        initial_state=point["state"]
+                                # Create unique_id for comparison
+                                unique_id = f"{DOMAIN}_{point['name'].lower()}"
+                                
+                                # Only add if switch doesn't already exist
+                                if unique_id not in existing_greenthing_switches:
+                                    switches.append(
+                                        GreenThingSwitch(
+                                            name=point["name"],
+                                            api_url=f"http://{host}:{port}/",
+                                            initial_state=point["state"]
+                                        )
                                     )
-                                )
-                        async_add_entities(switches)
+                                else:
+                                    _LOGGER.debug(
+                                        "Switch %s already exists, skipping", 
+                                        point["name"]
+                                    )
+                                    
+                        if switches:
+                            async_add_entities(switches)
+                        else:
+                            _LOGGER.info("No new switches to add")
                     else:
                         _LOGGER.error("Failed to fetch switches from API: %s", response.status)
                         raise ConfigEntryNotReady
