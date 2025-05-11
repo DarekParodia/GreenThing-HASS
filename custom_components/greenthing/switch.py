@@ -45,7 +45,7 @@ async def async_setup_entry(
                         _LOGGER.error("Failed to fetch switches from API: %s", response.status)
                         raise ConfigEntryNotReady
         except (aiohttp.ClientError, async_timeout.TimeoutError) as err:
-            _LOGGER.error("Error connecting to GreenThing API: %s", err)
+            _LOGGER.error("Error connecting to GreenThing API: %s", err) 
             raise ConfigEntryNotReady
         
 def get_switch_from_name(name: str, json_data: dict) -> dict:
