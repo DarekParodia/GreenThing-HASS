@@ -13,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 
 from .const import DOMAIN
+from .api import ApiHandler
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ class GreenThingSwitch(SwitchEntity):
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{name.lower()}"
         self._is_on = initial_state
+        self._api_handler = ApiHandler(hass.data[DOMAIN][entry.entry_id]["api_url"])
 
     @property
     def is_on(self) -> bool:
@@ -45,6 +47,12 @@ class GreenThingSwitch(SwitchEntity):
 
     async def _update_state(self) -> None:
         """Fetch switch state from API."""
+        state = await self._api_handler.getState(self._attr_name)
+        if state is not None:
+            self._is_on = state
+            self._attr_is_on = self._is_on
+        else:
+            _LOGGER.error("Failed to fetch state for %s", self._attr_name)
 
 
     async def async_turn_on(self, **kwargs: Any) -> None:
