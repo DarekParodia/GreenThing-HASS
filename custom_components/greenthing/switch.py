@@ -28,16 +28,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     datapoints = await API_HANDLER.get_datapoints() 
     for datapoint in datapoints:
         if datapoint["type"] == 2:
-            switches.append(GreenThingSwitch(datapoint["name"], datapoint["state"]))
+            switches.append(GreenThingSwitch(datapoint["name"], datapoint["state"], API_HANDLER))
     async_add_entities(switches, True)
 class GreenThingSwitch(SwitchEntity):
     """Representation of a GreenThing switch."""
 
-    def __init__(self, name: str, initial_state: bool) -> None:
+    def __init__(self, name: str, initial_state: bool, api_handler: ApiHandler) -> None:
         """Initialize the switch."""
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{name.lower()}"
         self._is_on = initial_state
+        self.api_handler = api_handler
 
     @property
     def is_on(self) -> bool:
@@ -46,7 +47,7 @@ class GreenThingSwitch(SwitchEntity):
 
     async def _update_state(self) -> None:
         """Fetch switch state from API."""
-        state = await API_HANDLER.getState(self._attr_name)
+        state = await self.api_handler.getState(self._attr_name)
         if state is not None:
             self._is_on = state
             self._attr_is_on = self._is_on
