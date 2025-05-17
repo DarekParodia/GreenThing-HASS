@@ -25,7 +25,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     API_HANDLER = ApiHandler(API_URL)
 
     switches = [] 
-    for datapoint in API_HANDLER.get_datapoints():
+    datapoints = await API_HANDLER.get_datapoints(API_URL)
+    for datapoint in datapoints:
         if datapoint["type"] == 2:
             switches.append(GreenThingSwitch(datapoint["name"], datapoint["state"]))
     async_add_entities(switches, True)
